@@ -1,7 +1,15 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  persons: {},
+  persons: {
+    /* id: {
+      id,
+      name,
+      age,
+      relation,
+      bitmap
+    } */
+  },
 };
 
 const personsSlice = createSlice({

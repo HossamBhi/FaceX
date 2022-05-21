@@ -7,11 +7,11 @@ import MainStack from "./navigation";
 import { NavigationContainer } from "@react-navigation/native";
 
 export default function App() {
+  // import fonts 
   const [loaded] = useFonts({
     "Roboto-Bold": require("./assets/fonts/Roboto-Bold.ttf"),
     "Roboto-Medium": require("./assets/fonts/Roboto-Medium.ttf"),
     "Roboto-Regular": require("./assets/fonts/Roboto-Regular.ttf"),
-    "SFProDisplay-Regular": require("./assets/fonts/SFProDisplay-Regular.ttf"),
   });
   if (!loaded) return null;
 

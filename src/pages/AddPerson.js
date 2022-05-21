@@ -13,7 +13,7 @@ import { Entypo } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import CustomeButton from "../components/common/CustomeButton";
 import CustomeTextInput from "../components/common/CustomeTextInput";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { FONT_MEDIUM } from "../utils/fonts";
 import {
   reinitialPersonsAction,
@@ -22,16 +22,14 @@ import {
 } from "../redux/reducers/persons";
 import { getUniqueId } from "../utils/helper";
 import { launchImageLibrary } from "react-native-image-picker";
-import FaceSDK, {
-  FaceCaptureResponse,
-} from "@regulaforensics/react-native-face-api";
+import FaceSDK from "@regulaforensics/react-native-face-api";
 
 const AddPerson = ({ route, navigation }) => {
   const person = route.params?.person;
   const { height } = useWindowDimensions();
   const dispatch = useDispatch();
   const [name, setName] = useState(person?.name || "");
-  const [isEName, setIsEName] = useState("");
+  const [isEName, setIsEName] = useState(""); // is Error Name
   const [relation, setRelation] = useState(person?.relation || "");
   const [age, setAge] = useState(person?.age || "");
   const [personImage, setPersonImage] = useState(null);
@@ -63,11 +61,7 @@ const AddPerson = ({ route, navigation }) => {
   };
 
   const handlePickImage = async () => {
-    const result = await launchImageLibrary({
-      mediaType: "photo",
-      // maxHeight: 300,
-      // maxWidth: 300,
-    });
+    const result = await launchImageLibrary({ mediaType: "photo" });
     // console.log("result: ", result);
     if (result.assets) setPersonImage(result.assets);
   };
@@ -75,12 +69,8 @@ const AddPerson = ({ route, navigation }) => {
   const handleFaceCapture = () => {
     FaceSDK.presentFaceCaptureActivity(
       (faceCaptureResponse) => {
-        // console.log("faceCaptureResponse: ", faceCaptureResponse);
-        const response = FaceCaptureResponse.fromJson(
-          JSON.parse(faceCaptureResponse)
-        );
-        console.log("res: ", response);
-        const bitmap = response.image.bitmap;
+        console.log("faceCaptureResponse: ", faceCaptureResponse)
+        const bitmap = JSON.parse(faceCaptureResponse)?.image?.bitmap;
         if (bitmap) {
           dispatch(
             savePersonAction({

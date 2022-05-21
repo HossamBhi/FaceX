@@ -9,9 +9,8 @@ import CustomeButton from "../components/common/CustomeButton";
 import { bg_color, primary_color } from "../utils/colors";
 import CheckBoxWithText from "../components/common/CheckBoxWithText";
 import { saveNewUserAction } from "../redux/reducers/users";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { getUniqueId } from "../utils/helper";
-import { useNavigation } from "@react-navigation/native";
 
 const CreateAccount = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -57,12 +56,12 @@ const CreateAccount = ({ navigation }) => {
     >
       <PageHeader
         text={"Sign Up"}
-        left={
-          <CustomeButton
-            icon={<AntDesign name="close" size={24} color="#BDBDBD" />}
-            onPress={() => alert("Close")}
-          />
-        }
+        // left={
+        //   <CustomeButton
+        //     icon={<AntDesign name="close" size={24} color="#BDBDBD" />}
+        //     onPress={() => alert("Close")}
+        //   />
+        // }
         right={
           <CustomeButton
             text="Login"

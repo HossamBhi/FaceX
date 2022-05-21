@@ -1,11 +1,10 @@
 import React from "react";
 import { View, Image, Text, StyleSheet } from "react-native";
-import { primary_color } from "../../utils/colors";
 import CustomeButton from "../common/CustomeButton";
 
 const PickUser = ({ pickedUser, setPickedUser }) => {
   return (
-    <View style={styles.container}>
+    <View>
       <Text style={styles.header}>
         I am a {pickedUser === 1 && "Doctor"}
         {pickedUser === 2 && "Patient"}
@@ -16,7 +15,6 @@ const PickUser = ({ pickedUser, setPickedUser }) => {
           style={{ justifyContent: "center", alignItems: "center" }}
           icon={
             <Image
-              // style={[styles.image]}
               style={[
                 styles.image,
                 pickedUser === 1
@@ -29,7 +27,6 @@ const PickUser = ({ pickedUser, setPickedUser }) => {
                   : require("../../assets/doctor.png")
               }
               resizeMode="contain"
-              // resizeMode="cover"
             />
           }
         />
@@ -58,7 +55,6 @@ const PickUser = ({ pickedUser, setPickedUser }) => {
   );
 };
 const styles = StyleSheet.create({
-  container: {},
   images: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -68,22 +64,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     alignItems: "center",
   },
-  active: {
-    // height: 160,
-    maxWidth: "50%",
-    minWidth: 160,
-  },
-  image: {
-    // maxWidth: "40%",
-    maxWidth: "40%",
-    minWidth: 120,
-    height: 160,
-  },
-  header: {
-    paddingHorizontal: 20,
-    fontSize: 16,
-    fontWeight: "600",
-  },
+  active: { maxWidth: "50%", minWidth: 160 },
+  image: { maxWidth: "40%", minWidth: 120, height: 160 },
+  header: { paddingHorizontal: 20, fontSize: 16, fontWeight: "600" },
 });
 
 export default PickUser;

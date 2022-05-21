@@ -13,16 +13,13 @@ import {
 import { bg_color, primary_color, primary_color_light } from "../utils/colors";
 import LinearGradient from "react-native-linear-gradient";
 import PageHeader from "../components/common/PageHeader";
-import { Octicons } from "@expo/vector-icons";
-import { FontAwesome } from "@expo/vector-icons";
+import { Octicons, FontAwesome } from "@expo/vector-icons";
 import { useSelector } from "react-redux";
 import { FONT_REGULAR } from "../utils/fonts";
 import FaceSDK, {
-  FaceCaptureResponse,
   ImageType,
   MatchFacesImage,
   MatchFacesRequest,
-  MatchFacesResponse,
 } from "@regulaforensics/react-native-face-api";
 
 const Homepage = ({ navigation }) => {
@@ -32,28 +29,26 @@ const Homepage = ({ navigation }) => {
   const [isLoad, setIsLoad] = useState(false);
 
   const handleFaceCapture = () => {
-    FaceSDK.presentFaceCaptureActivity(
-      (faceCaptureResponse) => {
-        // console.log("faceCaptureResponse: ", faceCaptureResponse);
-        const response = FaceCaptureResponse.fromJson(
-          JSON.parse(faceCaptureResponse)
-        );
-        handleCompareFaces(response.image.bitmap);
-      },
-      (e) => {
-        alert("Error while recognise face.");
-      }
-    );
+    if (Object.values(persons).length === 0) {
+      alert("No Persons. Add one First.");
+    } else {
+      FaceSDK.presentFaceCaptureActivity(
+        (faceCaptureResponse) =>
+          handleCompareFaces(JSON.parse(faceCaptureResponse).image.bitmap),
+        (e) => {
+          alert("Error while recognise face." + e);
+        }
+      );
+    }
   };
 
   const handleCompareFaces = async (currentImage) => {
     const currImage = new MatchFacesImage();
     currImage.imageType = ImageType["PRINTED"];
     currImage.bitmap = currentImage;
-    // let images = [currImage];
+
     setIsLoad(true);
     let isLoad = true;
-    // console.log("isLoad Out: ", isLoad);
 
     let imagesLenght = 0;
     Object.values(persons).map((person) => {
@@ -64,31 +59,30 @@ const Homepage = ({ navigation }) => {
       request.images = [currImage, image];
 
       FaceSDK.matchFaces(
-        JSON.stringify(request),
+        JSON.stringify(request), // convert object to string
         (matchFacesResponse) => {
           // console.log("matchFacesResponse: ", matchFacesResponse);
-
-          const response = MatchFacesResponse.fromJson(
-            JSON.parse(matchFacesResponse)
-          );
-          // console.log("response: ", response);
-          // console.log("result: ", response.results);
-          // console.log("similarity: ", response.results[0]?.similarity);
-          // console.log("isLoad: ", isLoad);
-          const similarity = response.results[0]?.similarity;
-          if (similarity > 0.5 && isLoad) {
-            // console.log("person: ", person.name);
-            navigation.navigate("PersonsStack", {
-              screen: "PersonDetails",
-              params: person,
-            });
+          const response = JSON.parse(matchFacesResponse);
+          if (response?.exception?.message) {
             isLoad = false;
             setIsLoad(false);
-          }
-          imagesLenght++;
-          if (imagesLenght === Object.keys(persons).length) {
-            isLoad = false;
-            setIsLoad(false);
+            alert("Error Internet Is Required.");
+          } else {
+            const similarity = response.results[0]?.similarity; // from 1 to 0.0 => .5 .11111111111
+            if (similarity > 0.5 && isLoad) {
+              navigation.navigate("PersonsStack", {
+                screen: "PersonDetails",
+                params: person,
+              });
+              isLoad = false;
+              setIsLoad(false);
+            }
+            imagesLenght++;
+            if (imagesLenght === Object.keys(persons).length) {
+              isLoad = false;
+              setIsLoad(false);
+              alert("Unknown person.");
+            }
           }
         },
         (e) => {
@@ -113,7 +107,8 @@ const Homepage = ({ navigation }) => {
         />
         <View style={styles.container}>
           <Text style={styles.headerText}>
-            Good afternoon, {logedUser?.name}
+            Good afternoon,
+            {logedUser?.name}
           </Text>
 
           <View style={styles.center}>
@@ -143,21 +138,14 @@ const Homepage = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingHorizontal: "10%",
-  },
+  container: { flex: 1, paddingHorizontal: "10%" },
   headerText: {
     fontSize: 24,
     color: "#242334",
     fontWeight: "700",
     fontFamily: FONT_REGULAR,
   },
-  center: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
+  center: { flex: 1, justifyContent: "center", alignItems: "center" },
   image: {
     justifyContent: "center",
     alignItems: "center",
@@ -167,8 +155,8 @@ const styles = StyleSheet.create({
   btn: {
     width: "100%",
     height: "60%",
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: "center", // if flexDirection => column working on X . if flexDirection => row working on Y
+    justifyContent: "center", // if flexDirection => column working on Y . if flexDirection => row working on X
     borderRadius: 10000,
   },
   text: {

@@ -6,7 +6,6 @@ import {
   TextInput,
   FlatList,
   Image,
-  ScrollView,
 } from "react-native";
 import { primary_color, primary_color_light } from "../utils/colors";
 import LinearGradient from "react-native-linear-gradient";
@@ -15,11 +14,9 @@ import { useSelector } from "react-redux";
 import { Entypo } from "@expo/vector-icons";
 import CustomeButton from "../components/common/CustomeButton";
 import UserRow from "../components/persons/UserRow";
-import { useNavigation } from "@react-navigation/native";
 
-const PersonsPage = (props) => {
+const PersonsPage = ({ navigation }) => {
   const { height, width } = useWindowDimensions();
-  const navigation = useNavigation();
   const { persons } = useSelector((state) => state.persons);
   const [searchWord, setSearchWord] = useState("");
 
@@ -61,17 +58,6 @@ const PersonsPage = (props) => {
           value={searchWord}
           onChangeText={setSearchWord}
         />
-        {/* {Object.values(persons)
-            .filter(handleSearchPersons)
-            .map((item) => (
-              <UserRow
-                key={item.id}
-                person={item}
-                onPress={() =>
-                  navigation.navigate("AddPerson", { person: item })
-                }
-              />
-            ))} */}
         <FlatList
           showsVerticalScrollIndicator={false}
           style={{ flex: 1 }}
@@ -100,11 +86,7 @@ const PersonsPage = (props) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    position: "relative",
-    // paddingBottom: 100,
-  },
+  container: { flex: 1, position: "relative" },
   add: {
     position: "absolute",
     bottom: 20,
@@ -131,7 +113,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginTop: 30,
   },
-  
 });
 
 export default PersonsPage;

@@ -7,11 +7,9 @@ import CustomeButton from "../components/common/CustomeButton";
 import { bg_color, primary_color } from "../utils/colors";
 import { useDispatch, useSelector } from "react-redux";
 import { logOutAction, setLogedUserAction } from "../redux/reducers/users";
-import { useNavigation } from "@react-navigation/native";
 
-const Login = (props) => {
-  const navigation = useNavigation();
-  const { users, logedUser } = useSelector((state) => state.users);
+const Login = ({ navigation }) => {
+  const { users } = useSelector((state) => state.users);
   const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [isEEmail, setIsEEmail] = useState("");
@@ -19,7 +17,6 @@ const Login = (props) => {
   const [isEPass, setIsEPass] = useState("");
   const [isShowPass, setIsShowPass] = useState(false);
   const [errorMsg, setErrorMsg] = useState(null);
-  
 
   const handleSubmitUser = () => {
     dispatch(logOutAction());
@@ -37,10 +34,10 @@ const Login = (props) => {
         u.email.trim().toLowerCase() === email.trim().toLowerCase() &&
         u.password === password
     );
-    // console.log("hasAccount: ", hasAccount);
+
     if (hasAccount) {
       dispatch(setLogedUserAction(hasAccount));
-      navigation.navigate("TabNavigator")
+      navigation.navigate("TabNavigator");
       setIsEPass(false);
       setIsEEmail(false);
       setErrorMsg(null);
