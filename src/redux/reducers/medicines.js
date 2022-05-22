@@ -18,13 +18,13 @@ const initialState = {
     ],
     "22/10/2022": [
       {
-        id: 1,
+        id: 3,
         title: "Medicine",
         checked: true,
         dueDate: 1545640412200,
       },
       {
-        id: 2,
+        id: 4,
         title: "Medicine 2 ",
         checked: false,
         dueDate: 1545640410000,
@@ -32,13 +32,13 @@ const initialState = {
     ],
     "22/10/2022": [
       {
-        id: 1,
+        id: 5,
         title: "Medicine",
         checked: true,
         dueDate: 1545640412200,
       },
       {
-        id: 2,
+        id: 6,
         title: "Medicine 2 ",
         checked: false,
         dueDate: 1545640410000,
@@ -46,13 +46,13 @@ const initialState = {
     ],
     "22/8/2022": [
       {
-        id: 1,
+        id: 7,
         title: "Medicine",
         checked: true,
         dueDate: 1545640412200,
       },
       {
-        id: 2,
+        id: 8,
         title: "Medicine 2 ",
         checked: false,
         dueDate: 1545640410000,
@@ -60,13 +60,13 @@ const initialState = {
     ],
     "22/6/2022": [
       {
-        id: 1,
+        id: 9,
         title: "Medicine",
         checked: true,
         dueDate: 1545640412200,
       },
       {
-        id: 2,
+        id: 10,
         title: "Medicine 2 ",
         checked: false,
         dueDate: 1545640410000,
@@ -74,13 +74,13 @@ const initialState = {
     ],
     "25/10/2022": [
       {
-        id: 1,
+        id: 11,
         title: "Medicine",
         checked: true,
         dueDate: 1545640412200,
       },
       {
-        id: 2,
+        id: 12,
         title: "Medicine 2 ",
         checked: false,
         dueDate: 1545640410000,
@@ -111,21 +111,27 @@ const medicationsSlice = createSlice({
     },
     changeMedicationStatusAction: (state, { payload }) => {
       const { id, date } = payload;
-      const medication = state.medications[date].find((m) => m.id === id);
-      medication.checked = !medication.checked;
-      state.medications = {
-        ...state.medications,
-        [date]: [
-          ...state.medications[date].map((m) => {
-            if (m.id !== id) {
-              return m;
-            } else {
-              return { ...m, checked: !m.checked };
-            }
-          }),
-          //   medication,
-        ],
-      };
+      state.medications[date].map((m) => {
+        if (m.id === id) {
+          m.checked = !m.checked;
+        }
+      });
+      state.medications = state.medications;
+      // const medication = state.medications[date].find((m) => m.id === id);
+      // medication.checked = !medication.checked;
+      // state.medications = {
+      //   ...state.medications,
+      //   [date]: [
+      //     ...state.medications[date].map((m) => {
+      //       if (m.id !== id) {
+      //         return m;
+      //       } else {
+      //         return { ...m, checked: !m.checked };
+      //       }
+      //     }),
+      //     //   medication,
+      //   ],
+      // };
     },
     removeMedica1tionAction: (state, { payload }) => {},
     reinitialMedicationsAction: (state) => initialState,

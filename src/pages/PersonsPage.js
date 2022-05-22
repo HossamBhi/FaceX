@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, position: "relative" },
   add: {
     position: "absolute",
-    bottom: 20,
+    bottom: 40,
     right: 0,
     width: 82,
     height: 82,
