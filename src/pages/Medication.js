@@ -1,18 +1,42 @@
 import React from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { useWindowDimensions, FlatList } from "react-native";
+import LinearGradient from "react-native-linear-gradient";
+import { useSelector } from "react-redux";
+import PageHeader from "../components/common/PageHeader";
+import MedicationDay from "../components/medication/MedicationDay";
+import { primary_color_light } from "../utils/colors";
 
 const Medication = (props) => {
+  const { height, width } = useWindowDimensions();
+  const { medications } = useSelector((state) => state.medications);
+  console.log("medi: ", medications);
   return (
-    <ScrollView style={{ flex: 1 }}>
-      <View style={styles.container}>
-        <Text>Medication</Text>
-      </View>
-    </ScrollView>
+    <LinearGradient
+      colors={[
+        "#ffffff",
+        primary_color_light,
+        primary_color_light,
+        primary_color_light,
+        "#8C81F7",
+      ]}
+      style={{ paddingHorizontal: "5%", flex: 1, minHeight: height - 60 }}
+    >
+      <PageHeader text={"Medication"} />
+      <FlatList
+        showsVerticalScrollIndicator={false}
+        style={{ flex: 1 }}
+        data={Object.keys(medications)}
+        renderItem={({ item }) => (
+          <MedicationDay
+            date={item}
+            items={medications[item]}
+            isShowDate={false}
+          />
+        )}
+        keyExtractor={(item) => item}
+      />
+    </LinearGradient>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {},
-});
 
 export default Medication;

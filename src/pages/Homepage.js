@@ -49,7 +49,7 @@ const Homepage = ({ navigation }) => {
 
     setIsLoad(true);
     let isLoad = true;
-
+    let findUser = false;
     let imagesLenght = 0;
     Object.values(persons).map((person) => {
       const image = new MatchFacesImage();
@@ -70,6 +70,7 @@ const Homepage = ({ navigation }) => {
           } else {
             const similarity = response.results[0]?.similarity; // from 1 to 0.0 => .5 .11111111111
             if (similarity > 0.5 && isLoad) {
+              findUser = true;
               navigation.navigate("PersonsStack", {
                 screen: "PersonDetails",
                 params: person,
@@ -81,7 +82,7 @@ const Homepage = ({ navigation }) => {
             if (imagesLenght === Object.keys(persons).length) {
               isLoad = false;
               setIsLoad(false);
-              alert("Unknown person.");
+              if (!findUser) alert("Unknown person.");
             }
           }
         },
