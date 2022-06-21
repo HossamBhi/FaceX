@@ -4,11 +4,24 @@ import { primary_color } from "../../utils/colors";
 import { FONT_REGULAR } from "../../utils/fonts";
 import MedicationItem from "./MedicationItem";
 
-export default ({ date, items, isShowDate }) => (
+export default ({
+  date,
+  items,
+  isShowDate,
+  isActivity,
+  setEditabeItem,
+  showEditableModal,
+}) => (
   <View style={styles.container}>
-    {isShowDate !== false && <Text style={styles.day}>{date}</Text>}
+    {/* {isShowDate !== false && <Text style={styles.day}>{date}</Text>} */}
     {items.map((m, i) => (
-      <MedicationItem {...m} date={date} key={i} />
+      <MedicationItem
+        item={m}
+        key={m.id}
+        isActivity={isActivity}
+        setEditabeItem={setEditabeItem}
+        showEditableModal={showEditableModal}
+      />
     ))}
   </View>
 );

@@ -11,12 +11,13 @@ import { primary_color, primary_color_light } from "../utils/colors";
 import LinearGradient from "react-native-linear-gradient";
 import PageHeader from "../components/common/PageHeader";
 import { useSelector } from "react-redux";
-import { Entypo } from "@expo/vector-icons";
+import { Octicons, Entypo } from "@expo/vector-icons";
 import CustomeButton from "../components/common/CustomeButton";
 import UserRow from "../components/persons/UserRow";
 
 const PersonsPage = ({ navigation }) => {
-  const { height, width } = useWindowDimensions();
+  const { height } = useWindowDimensions();
+  const { logedUser } = useSelector((state) => state.users);
   const { persons } = useSelector((state) => state.persons);
   const [searchWord, setSearchWord] = useState("");
 
@@ -40,14 +41,23 @@ const PersonsPage = ({ navigation }) => {
         <PageHeader
           style={{ paddingHorizontal: 0 }}
           left={
-            <CustomeButton
-              onPress={() => navigation.goBack()}
-              icon={
-                <View style={styles.back}>
-                  <Entypo name="chevron-left" size={28} color="#ffffff" />
-                </View>
-              }
-            />
+            logedUser?.type === 1 ? (
+              <CustomeButton
+                onPress={() => navigation.navigate("Menu")}
+                icon={
+                  <Octicons name="three-bars" size={28} color={primary_color} />
+                }
+              />
+            ) : (
+              <CustomeButton
+                onPress={() => navigation.goBack()}
+                icon={
+                  <View style={styles.back}>
+                    <Entypo name="chevron-left" size={28} color="#ffffff" />
+                  </View>
+                }
+              />
+            )
           }
           text="People"
         />
@@ -61,7 +71,9 @@ const PersonsPage = ({ navigation }) => {
         <FlatList
           showsVerticalScrollIndicator={false}
           style={{ flex: 1 }}
-          data={Object.values(persons).filter(handleSearchPersons)}
+          data={Object.values(persons)
+            .filter((p) => p?.user?.id === logedUser.id)
+            .filter(handleSearchPersons)}
           renderItem={({ item }) => (
             <UserRow
               person={item}

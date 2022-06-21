@@ -21,6 +21,7 @@ import FaceSDK, {
   MatchFacesImage,
   MatchFacesRequest,
 } from "@regulaforensics/react-native-face-api";
+import CustomeButton from "../components/common/CustomeButton";
 
 const Homepage = ({ navigation }) => {
   const { height, width } = useWindowDimensions();
@@ -29,7 +30,10 @@ const Homepage = ({ navigation }) => {
   const [isLoad, setIsLoad] = useState(false);
 
   const handleFaceCapture = () => {
-    if (Object.values(persons).length === 0) {
+    if (
+      Object.values(persons).filter((p) => p?.user?.id === logedUser.id)
+        .length === 0
+    ) {
       alert("No Persons. Add one First.");
     } else {
       FaceSDK.presentFaceCaptureActivity(
@@ -51,48 +55,54 @@ const Homepage = ({ navigation }) => {
     let isLoad = true;
     let findUser = false;
     let imagesLenght = 0;
-    Object.values(persons).map((person) => {
-      const image = new MatchFacesImage();
-      image.imageType = ImageType["PRINTED"];
-      image.bitmap = person.identifyPerson;
-      const request = new MatchFacesRequest();
-      request.images = [currImage, image];
+    Object.values(persons)
+      .filter((p) => p?.user?.id === logedUser.id)
+      .map((person) => {
+        const image = new MatchFacesImage();
+        image.imageType = ImageType["PRINTED"];
+        image.bitmap = person.identifyPerson;
+        const request = new MatchFacesRequest();
+        request.images = [currImage, image];
 
-      FaceSDK.matchFaces(
-        JSON.stringify(request), // convert object to string
-        (matchFacesResponse) => {
-          // console.log("matchFacesResponse: ", matchFacesResponse);
-          const response = JSON.parse(matchFacesResponse);
-          if (response?.exception?.message) {
-            isLoad = false;
-            setIsLoad(false);
+        FaceSDK.matchFaces(
+          JSON.stringify(request), // convert object to string
+          (matchFacesResponse) => {
+            // console.log("matchFacesResponse: ", matchFacesResponse);
+            const response = JSON.parse(matchFacesResponse);
+            if (response?.exception?.message) {
+              isLoad = false;
+              setIsLoad(false);
+              alert("Error Internet Is Required.");
+            } else {
+              const similarity = response.results[0]?.similarity; // from 1 to 0.0 => .5 .11111111111
+              if (similarity > 0.5 && isLoad) {
+                findUser = true;
+                navigation.navigate("PersonsStack", {
+                  screen: "PersonDetails",
+                  params: person,
+                });
+                isLoad = false;
+                setIsLoad(false);
+              }
+              imagesLenght++;
+              if (
+                imagesLenght ===
+                Object.keys(persons).filter((p) => p?.user?.id === logedUser.id)
+                  .length
+              ) {
+                isLoad = false;
+                setIsLoad(false);
+                if (!findUser) alert("Unknown person.");
+              }
+            }
+          },
+          (e) => {
+            console.log("error: ", error);
             alert("Error Internet Is Required.");
-          } else {
-            const similarity = response.results[0]?.similarity; // from 1 to 0.0 => .5 .11111111111
-            if (similarity > 0.5 && isLoad) {
-              findUser = true;
-              navigation.navigate("PersonsStack", {
-                screen: "PersonDetails",
-                params: person,
-              });
-              isLoad = false;
-              setIsLoad(false);
-            }
             imagesLenght++;
-            if (imagesLenght === Object.keys(persons).length) {
-              isLoad = false;
-              setIsLoad(false);
-              if (!findUser) alert("Unknown person.");
-            }
           }
-        },
-        (e) => {
-          console.log("error: ", error);
-          alert("Error Internet Is Required.");
-          imagesLenght++;
-        }
-      );
-    });
+        );
+      });
   };
 
   return (
@@ -103,13 +113,19 @@ const Homepage = ({ navigation }) => {
       >
         <PageHeader
           style={{ paddingHorizontal: "10%" }}
-          left={<Octicons name="three-bars" size={28} color={primary_color} />}
+          left={
+            <CustomeButton
+              onPress={() => navigation.navigate("Menu")}
+              icon={
+                <Octicons name="three-bars" size={28} color={primary_color} />
+              }
+            />
+          }
           right={<FontAwesome name="bell" size={30} color={primary_color} />}
         />
         <View style={styles.container}>
           <Text style={styles.headerText}>
-            Good afternoon,
-            {logedUser?.name}
+            Good afternoon, {logedUser?.name}
           </Text>
 
           <View style={styles.center}>

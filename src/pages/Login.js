@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { View, StyleSheet, Text, ScrollView } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, StyleSheet, Text, ScrollView, BackHandler } from "react-native";
 import CustomeTextInput from "../components/common/CustomeTextInput";
 import PageHeader from "../components/common/PageHeader";
 import { FONT_MEDIUM, FONT_REGULAR } from "../utils/fonts";
@@ -8,7 +8,7 @@ import { bg_color, primary_color } from "../utils/colors";
 import { useDispatch, useSelector } from "react-redux";
 import { logOutAction, setLogedUserAction } from "../redux/reducers/users";
 
-const Login = ({ navigation }) => {
+const Login = ({ navigation, route }) => {
   const { users } = useSelector((state) => state.users);
   const dispatch = useDispatch();
   const [email, setEmail] = useState("");
@@ -17,7 +17,23 @@ const Login = ({ navigation }) => {
   const [isEPass, setIsEPass] = useState("");
   const [isShowPass, setIsShowPass] = useState(false);
   const [errorMsg, setErrorMsg] = useState(null);
+  console.log("Users: ", users);
 
+  useEffect(() => {
+    BackHandler.addEventListener("hardwareBackPress", handleBackHardwarePress);
+    return () =>
+      BackHandler.removeEventListener(
+        "hardwareBackPress",
+        handleBackHardwarePress
+      );
+  }, []);
+  const handleBackHardwarePress = () => {
+    if (route.name == "Login") {
+      navigation.navigate("CreateAccount");
+      return true;
+    }
+    return false;
+  };
   const handleSubmitUser = () => {
     dispatch(logOutAction());
 
@@ -36,8 +52,11 @@ const Login = ({ navigation }) => {
     );
 
     if (hasAccount) {
+      console.log("hasAccount: ", hasAccount);
       dispatch(setLogedUserAction(hasAccount));
-      navigation.navigate("TabNavigator");
+      navigation.navigate(
+        hasAccount?.type === 1 ? "PersonsPage" : "TabNavigator"
+      );
       setIsEPass(false);
       setIsEEmail(false);
       setErrorMsg(null);

@@ -7,7 +7,7 @@ const initialState = {
       name,
       age,
       relation,
-      bitmap
+      bitmap,user,
     } */
   },
 };

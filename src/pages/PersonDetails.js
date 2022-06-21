@@ -15,10 +15,12 @@ import { Entypo } from "@expo/vector-icons";
 import CustomeButton from "../components/common/CustomeButton";
 import { FONT_BOLD } from "../utils/fonts";
 import RowDetail from "../components/persons/RowDetail";
+import { useSelector } from "react-redux";
 
 const PersonDetails = ({ navigation, route }) => {
   const { height, width } = useWindowDimensions();
   const person = route.params;
+  const { logedUser } = useSelector((state) => state.users);
 
   return (
     <ScrollView style={{ flex: 1 }}>
@@ -77,7 +79,10 @@ const PersonDetails = ({ navigation, route }) => {
             />
             <View style={{ paddingHorizontal: 16, paddingTop: 15 }}>
               <Text style={styles.name}>{person.name}</Text>
-              <RowDetail name="Relation" value={person.relation} />
+              <RowDetail
+                name={logedUser.type === 1 ? "Diagnosis" : "Relation"}
+                value={person.relation}
+              />
               <RowDetail name="Age" value={person.age} />
             </View>
           </View>

@@ -2,22 +2,39 @@ import React from "react";
 import { TouchableOpacity, StyleSheet, Text } from "react-native";
 import { Checkbox } from "react-native-paper";
 import { useDispatch } from "react-redux";
-import {
-  changeMedicationStatusAction,
-  reinitialMedicationsAction,
-} from "../../redux/reducers/medicines";
+import { changeActivityStatusAction } from "../../redux/reducers/activities";
+import { changeMedicationStatusAction } from "../../redux/reducers/medicines";
 import { primary_color } from "../../utils/colors";
 import { FONT_MEDIUM } from "../../utils/fonts";
-import { formatAMPM } from "../../utils/helper";
+import { formatAMPM, getDayByDateFormat } from "../../utils/helper";
 
-const MedicationItem = ({ date, id, title, dueDate, checked }) => {
+const MedicationItem = ({
+  isActivity,
+  setEditabeItem,
+  item,
+  showEditableModal,
+}) => {
+  const { date, id, title, time, checked } = item;
   const dispatch = useDispatch();
+
   const handleCheckChange = () => {
-    dispatch(changeMedicationStatusAction({ date, id }));
+    isActivity
+      ? dispatch(
+          changeActivityStatusAction({ date: getDayByDateFormat(date), id })
+        )
+      : dispatch(
+          changeMedicationStatusAction({ date: getDayByDateFormat(date), id })
+        );
   };
   return (
-    <TouchableOpacity style={styles.container} onPress={handleCheckChange}>
-      <Text style={styles.time}>{formatAMPM(dueDate)}</Text>
+    <TouchableOpacity
+      style={styles.container}
+      onPress={() => {
+        setEditabeItem(item);
+        showEditableModal();
+      }}
+    >
+      <Text style={styles.time}>{formatAMPM(time)}</Text>
       <Text style={styles.title}>{title}</Text>
       <Checkbox
         status={checked ? "checked" : "unchecked"}

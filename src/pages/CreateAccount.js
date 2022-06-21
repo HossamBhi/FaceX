@@ -1,19 +1,19 @@
-import React, { useState } from "react";
-import { View, StyleSheet, Text, ScrollView } from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, StyleSheet, Text, ScrollView, BackHandler } from "react-native";
 import CustomeTextInput from "../components/common/CustomeTextInput";
 import PageHeader from "../components/common/PageHeader";
 import PickUser from "../components/createAccount/PickUser";
 import { FONT_MEDIUM, FONT_REGULAR } from "../utils/fonts";
-import { AntDesign } from "@expo/vector-icons";
 import CustomeButton from "../components/common/CustomeButton";
 import { bg_color, primary_color } from "../utils/colors";
 import CheckBoxWithText from "../components/common/CheckBoxWithText";
 import { saveNewUserAction } from "../redux/reducers/users";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getUniqueId } from "../utils/helper";
 
-const CreateAccount = ({ navigation }) => {
+const CreateAccount = ({ navigation, route }) => {
   const dispatch = useDispatch();
+  const { users } = useSelector((state) => state.users);
   const [name, setName] = useState("");
   const [isEName, setIsEName] = useState("");
   const [email, setEmail] = useState("");
@@ -21,8 +21,25 @@ const CreateAccount = ({ navigation }) => {
   const [password, setPassword] = useState("");
   const [isEPass, setIsEPass] = useState("");
   const [isShowPass, setIsShowPass] = useState(false);
-  const [pickedUser, setPickedUser] = useState(null);
+  const [pickedUser, setPickedUser] = useState(null); // 1 for doctor , 2 for patient
   const [isNews, setIsNews] = useState(false);
+
+  useEffect(() => {
+    BackHandler.addEventListener("hardwareBackPress", handleBackHardwarePress);
+    return () =>
+      BackHandler.removeEventListener(
+        "hardwareBackPress",
+        handleBackHardwarePress
+      );
+  }, []);
+
+  const handleBackHardwarePress = () => {
+    if (route.name == "CreateAccount") {
+      BackHandler.exitApp;
+      return true;
+    }
+    return false;
+  };
 
   const handleSubmitUser = () => {
     if (pickedUser === null) {
@@ -37,16 +54,24 @@ const CreateAccount = ({ navigation }) => {
     // check pass
     if (password.trim() === "") return setIsEPass(true);
     else setIsEPass(false);
-    dispatch(
-      saveNewUserAction({
-        id: getUniqueId(),
-        name,
-        email,
-        password,
-        type: pickedUser,
-      })
+    // check user in database
+    const hasAccount = users.find(
+      (u) => u.email.trim().toLowerCase() === email.trim().toLowerCase()
     );
-    navigation.navigate("Login");
+    if (hasAccount) {
+      alert("Email is exist.");
+    } else {
+      dispatch(
+        saveNewUserAction({
+          id: getUniqueId(),
+          name,
+          email,
+          password,
+          type: pickedUser,
+        })
+      );
+      navigation.navigate("Login");
+    }
   };
 
   return (
@@ -56,12 +81,6 @@ const CreateAccount = ({ navigation }) => {
     >
       <PageHeader
         text={"Sign Up"}
-        // left={
-        //   <CustomeButton
-        //     icon={<AntDesign name="close" size={24} color="#BDBDBD" />}
-        //     onPress={() => alert("Close")}
-        //   />
-        // }
         right={
           <CustomeButton
             text="Login"

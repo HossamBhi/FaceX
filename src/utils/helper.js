@@ -11,3 +11,8 @@ export function formatAMPM(time) {
   var strTime = hours + ":" + minutes + " " + ampm;
   return strTime;
 }
+
+export const getDayByDateFormat = (date) => {
+  const d = new Date(date);
+  return d.getDate() + "-" + Number(d.getMonth() + 1) + "-" + d.getFullYear();
+};

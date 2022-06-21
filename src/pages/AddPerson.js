@@ -13,10 +13,9 @@ import { Entypo } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import CustomeButton from "../components/common/CustomeButton";
 import CustomeTextInput from "../components/common/CustomeTextInput";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { FONT_MEDIUM } from "../utils/fonts";
 import {
-  reinitialPersonsAction,
   savePersonAction,
   removePersonAction,
 } from "../redux/reducers/persons";
@@ -25,6 +24,7 @@ import { launchImageLibrary } from "react-native-image-picker";
 import FaceSDK from "@regulaforensics/react-native-face-api";
 
 const AddPerson = ({ route, navigation }) => {
+  const { logedUser } = useSelector((state) => state.users);
   const person = route.params?.person;
   const { height } = useWindowDimensions();
   const dispatch = useDispatch();
@@ -69,7 +69,7 @@ const AddPerson = ({ route, navigation }) => {
   const handleFaceCapture = () => {
     FaceSDK.presentFaceCaptureActivity(
       (faceCaptureResponse) => {
-        console.log("faceCaptureResponse: ", faceCaptureResponse)
+        console.log("faceCaptureResponse: ", faceCaptureResponse);
         const bitmap = JSON.parse(faceCaptureResponse)?.image?.bitmap;
         if (bitmap) {
           dispatch(
@@ -80,6 +80,7 @@ const AddPerson = ({ route, navigation }) => {
               age,
               image: personImage,
               identifyPerson: bitmap,
+              user: logedUser,
             })
           );
           navigation.replace("PersonsPage");
@@ -161,7 +162,7 @@ const AddPerson = ({ route, navigation }) => {
             }
           />
           <CustomeTextInput
-            placeholder={"Relationship"}
+            placeholder={logedUser.type === 1 ? "Diagnosis" : "Relationship"}
             value={relation}
             onChangeText={setRelation}
           />
@@ -184,11 +185,7 @@ const AddPerson = ({ route, navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    position: "relative",
-    paddingBottom: 100,
-  },
+  container: { flex: 1, position: "relative", paddingBottom: 100 },
   back: {
     backgroundColor: primary_color,
     borderRadius: 1000,

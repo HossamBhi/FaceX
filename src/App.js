@@ -7,7 +7,7 @@ import MainStack from "./navigation";
 import { NavigationContainer } from "@react-navigation/native";
 
 export default function App() {
-  // import fonts 
+  // import fonts
   const [loaded] = useFonts({
     "Roboto-Bold": require("./assets/fonts/Roboto-Bold.ttf"),
     "Roboto-Medium": require("./assets/fonts/Roboto-Medium.ttf"),
@@ -18,8 +18,6 @@ export default function App() {
   return (
     <NavigationContainer>
       <View style={styles.container}>
-        {/* <CreateAccount /> */}
-        {/* <Login /> */}
         <MainStack />
         <StatusBar style="dark" animated={true} />
       </View>

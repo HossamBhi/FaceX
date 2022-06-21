@@ -110,7 +110,7 @@ const TabNavigator = () => (
               style={{ width: focused ? 26 : 24, height: focused ? 26 : 24 }}
             />
             {focused && (
-              <Text style={[styles.tabLabel, { color }]}>Medication</Text>
+              <Text style={[styles.tabLabel, { color }]}>Persons</Text>
             )}
           </View>
         ),
