@@ -86,13 +86,13 @@ export default ({ header, isActivity, hideModal, editableItem }) => {
       ? dispatch(
           updateActivityAction({
             date: getDayByDateFormat(editableItem.date),
-            item: getValues(),
+            item: { ...editableItem, ...getValues() },
           })
         )
       : dispatch(
           updateMedicationAction({
             date: getDayByDateFormat(editableItem.date),
-            item: getValues(),
+            item: { ...editableItem, ...getValues() },
           })
         );
     handleSetNotification();

@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { getDayByDateFormat } from "../../utils/helper";
 
 const initialState = { activities: {} };
 
@@ -23,10 +24,18 @@ const activitiesSlice = createSlice({
     },
     updateActivityAction: (state, { payload }) => {
       const { date, item } = payload;
-      const index = state.activities[date].findIndex(
+      const newDate = getDayByDateFormat(item.date);
+      const index = state.activities[date]?.findIndex(
         (ele) => ele.id == item.id
       );
-      state.activities[date][index] = item;
+      if (date != newDate) {
+        state.activities[date].splice(index, 1);
+        state.activities[newDate] = state.activities[newDate]
+          ? [...state.activities[newDate], ...item]
+          : [item];
+      } else {
+        state.activities[date][index] = item;
+      }
     },
     removeActivityAction: (state, { payload }) => {
       const { date, id } = payload;

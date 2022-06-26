@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { getDayByDateFormat } from "../../utils/helper";
 
 const initialState = {
   medications: {},
@@ -25,10 +26,23 @@ const medicationsSlice = createSlice({
     },
     updateMedicationAction: (state, { payload }) => {
       const { date, item } = payload;
-      const index = state.medications[date].findIndex(
+      const newDate = getDayByDateFormat(item.date);
+      const index = state.medications[date]?.findIndex(
         (ele) => ele.id == item.id
       );
-      state.medications[date][index] = item;
+      console.log("item: ", item);
+      if (date != newDate) {
+        state.medications[date].splice(index, 1);
+        state.medications[newDate] = state.medications[newDate]
+          ? [...state.medications[newDate], ...item]
+          : [item];
+      } else {
+        state.medications[date][index] = item;
+      }
+      // const index = state.medications[date]?.findIndex(
+      //   (ele) => ele.id == item.id
+      // );
+      // state.medications[date][index] = item;
     },
     removeMedicationAction: (state, { payload }) => {
       const { date, id } = payload;
